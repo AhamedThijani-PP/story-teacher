@@ -13,41 +13,40 @@ def generate_learning_content(topic, age):
     client = genai.Client(api_key=api_key)
 
     prompt = f"""
-You are an expert educational storyteller.
-
-Create an engaging learning lesson for a {age}-year-old child.
-
-Topic:
+Create an engaging educational story for a child of age {age} about:
 {topic}
 
-Requirements:
+The story must teach the concept naturally through an adventure.
+Use simple, age-appropriate language.
 
-1. Create a fun, age-appropriate story that teaches the topic.
-2. Use simple language suitable for a {age}-year-old.
-3. Include characters and a small adventure.
-4. Make sure the educational concept is scientifically or mathematically correct.
-5. The story should actually teach the concept.
-6. Create exactly 5 multiple-choice questions.
-7. Each question must have exactly 4 options.
-8. Questions must test understanding of the topic, not memorization of the story.
-9. Give the correct answer for every question.
-10. Return ONLY valid JSON.
+After the story, create exactly 5 multiple-choice questions.
 
-Use exactly this structure:
+For each question provide:
+- question
+- 4 options: A, B, C, D
+- correct answer
+- a short, simple explanation of WHY the correct answer is correct
+
+The explanations must be suitable for a child of age {age}.
+If a child chooses the wrong answer, the explanation should help them
+understand the concept rather than simply saying they are wrong.
+
+Return ONLY valid JSON in this exact structure:
 
 {{
     "title": "Story title",
-    "story": "Complete story here",
+    "story": "The complete story",
     "questions": [
         {{
-            "question": "Question here",
+            "question": "Question text",
             "options": {{
                 "A": "Option A",
                 "B": "Option B",
                 "C": "Option C",
                 "D": "Option D"
             }},
-            "answer": "A"
+            "answer": "B",
+            "explanation": "Simple explanation of why B is correct."
         }}
     ]
 }}
