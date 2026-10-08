@@ -1,0 +1,437 @@
+{% load static %}
+
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Story Teacher - Learning Session</title>
+
+    <link rel="stylesheet"
+          href="{% static 'css/bootstrap.min.css' %}">
+
+    <link rel="stylesheet"
+          href="{% static 'css/style.css' %}">
+
+</head>
+
+
+<body>
+
+
+<div class="site-wrap">
+
+
+    <!-- NAVBAR -->
+
+    <header class="site-navbar site-navbar-target"
+            role="banner">
+
+        <div class="container">
+
+            <div class="menu-wrap d-flex align-items-center" style="background-color: #f6f5f5;">
+
+                <div class="site-logo mr-auto">
+
+                    <a style="color: #16c3b0; font-weight: 400;" href="{% url 'home' %}">
+                        Qlearning<span style="color: red;" class="text-primary">.</span>
+                    </a>
+
+                </div>
+
+
+                <nav class="site-navigation">
+
+                    <ul class="site-menu main-menu">
+
+                        <li>
+                            <a href="{% url 'home' %}"
+                               class="nav-link">
+                                Home
+                            </a>
+                        </li>
+
+                        <li class="active">
+                            <a href="{% url 'learning' %}"
+                               class="nav-link">
+                                Start Learning
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </nav>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- LEARNING SECTION -->
+
+    <div class="site-section">
+
+        <div class="container">
+
+            <div class="row justify-content-center">
+
+                <div class="col-lg-8">
+
+                    <div class="text-center mb-5">
+
+                        <span class="text-cursive h5 text-red">
+                            Story Teacher
+                        </span>
+
+                        <h1 class="text-teal font-weight-bold">
+                            Let's Start Learning!
+                        </h1>
+
+                        <p>
+                            Choose a topic and tell us the learner's age.
+                        </p>
+
+                    </div>
+
+
+                    <div class="bg-light p-5 rounded">
+
+                        <form method="POST">
+
+                            {% csrf_token %}
+
+
+                            <div class="form-group">
+
+                                <label>
+                                    <strong>What do you want to learn?</strong>
+                                </label>
+
+                                <input type="text"
+                                       name="topic"
+                                       class="form-control"
+                                       placeholder="Example: Fractions"
+                                       required>
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label>
+                                    <strong>Child's Age</strong>
+                                </label>
+
+                                <select name="age"
+                                        class="form-control">
+
+                                    <option value="6">6 years</option>
+                                    <option value="7">7 years</option>
+                                    <option value="8">8 years</option>
+                                    <option value="9">9 years</option>
+                                    <option value="10">10 years</option>
+                                    <option value="11">11 years</option>
+                                    <option value="12">12 years</option>
+                                    <option value="13">13 years</option>
+                                    <option value="14">14 years</option>
+
+                                </select>
+
+                            </div>
+
+
+                            <div class="text-center mt-4">
+
+                                <button type="submit"
+                                        class="btn btn-primary btn-custom-1 py-3 px-5">
+
+                                    Create My Learning Story 🚀
+
+                                </button>
+
+                            </div>
+
+                        </form>
+                        
+                        {% if error %}
+
+<div class="alert alert-danger mt-4">
+    <strong>AI Error:</strong>
+    {{ error }}
+</div>
+
+{% endif %}
+
+
+{% if story %}
+
+<div class="card mt-5 shadow-sm">
+
+    <div class="card-body p-5">
+
+        <span class="badge badge-warning mb-3">
+            AI Generated Story
+        </span>
+
+        <h2 class="text-teal font-weight-bold">
+            Your Learning Story
+        </h2>
+
+        <div class="mt-4"
+             style="font-size: 18px; line-height: 1.8; white-space: pre-line;">
+            {{ story }}
+        </div>
+
+    </div>
+
+</div>
+
+{% endif %}
+
+                    </div>
+
+
+                    <!-- DEMO QUESTION -->
+
+                    {% if lesson %}
+
+<!-- ================= STORY ================= -->
+
+<div class="card mt-5 shadow-sm">
+
+    <div class="card-body p-5">
+
+        <span class="badge badge-warning mb-3">
+            AI Generated Story
+        </span>
+
+        <h2 class="text-teal font-weight-bold mb-4">
+            {{ lesson.title }}
+        </h2>
+
+        <div style="
+            font-size: 18px;
+            line-height: 1.9;
+            white-space: pre-line;
+        ">
+            {{ lesson.story }}
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================= QUIZ ================= -->
+
+<div class="mt-5">
+
+    <div class="text-center mb-5">
+
+        <span class="text-cursive h5 text-red">
+            Let's Check Your Understanding
+        </span>
+
+        <h2 class="text-teal font-weight-bold">
+            What Did You Learn? 🧠
+        </h2>
+
+        <p>
+            Answer the questions based on the story.
+        </p>
+
+    </div>
+
+
+    {% for question in lesson.questions %}
+
+    <div class="card mb-4 shadow-sm">
+
+        <div class="card-body p-4">
+
+            <!-- QUESTION -->
+            <h4 class="font-weight-bold mb-4">
+                {{ forloop.counter }}. {{ question.question }}
+            </h4>
+
+
+            <!-- A -->
+            <button type="button"
+                    class="btn btn-outline-primary btn-block text-left mb-2 answer-btn"
+                    onclick="checkAnswer(this, '{{ question.answer }}', 'A')">
+
+                <strong>A.</strong>
+                {{ question.options.A }}
+
+            </button>
+
+
+            <!-- B -->
+            <button type="button"
+                    class="btn btn-outline-primary btn-block text-left mb-2 answer-btn"
+                    onclick="checkAnswer(this, '{{ question.answer }}', 'B')">
+
+                <strong>B.</strong>
+                {{ question.options.B }}
+
+            </button>
+
+
+            <!-- C -->
+            <button type="button"
+                    class="btn btn-outline-primary btn-block text-left mb-2 answer-btn"
+                    onclick="checkAnswer(this, '{{ question.answer }}', 'C')">
+
+                <strong>C.</strong>
+                {{ question.options.C }}
+
+            </button>
+
+
+            <!-- D -->
+            <button type="button"
+                    class="btn btn-outline-primary btn-block text-left answer-btn"
+                    onclick="checkAnswer(this, '{{ question.answer }}', 'D')">
+
+                <strong>D.</strong>
+                {{ question.options.D }}
+
+            </button>
+
+
+            <!-- ANSWER RESULT -->
+            <div class="answer-result mt-3"></div>
+
+        </div>
+
+    </div>
+
+    {% endfor %}
+
+</div>
+
+{% endif %}
+
+<div id="result" class="mt-4 text-center"></div>
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <footer class="site-footer" id="contact">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-4">
+            <h2 class="footer-heading mb-3">About Us</h2>
+                <p class="mb-5">Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. </p>
+
+                <h2 class="footer-heading mb-4">Newsletter</h2>
+                <form action="#" class="d-flex" class="subscribe">
+                  <input type="text" class="form-control mr-3" placeholder="Email">
+                  <input type="submit" value="Send" class="btn btn-primary">
+                </form>
+          </div>
+          <div class="col-lg-8 ml-auto">
+            <div class="row">
+              <div class="col-lg-4 ml-auto">
+                <h2 class="footer-heading mb-4">Navigation</h2>
+                <ul class="list-unstyled">
+                  <li><a href="#">About Us</a></li>
+                  <li><a href="#">Testimonials</a></li>
+                  <li><a href="#">Terms of Service</a></li>
+                  <li><a href="#">Privacy</a></li>
+                  <li><a href="#">Contact Us</a></li>
+                </ul>
+              </div>
+              <div class="col-lg-4">
+                <h2 class="footer-heading mb-4">Navigation</h2>
+                <ul class="list-unstyled">
+                  <li><a href="#">About Us</a></li>
+                  <li><a href="#">Testimonials</a></li>
+                  <li><a href="#">Terms of Service</a></li>
+                  <li><a href="#">Privacy</a></li>
+                  <li><a href="#">Contact Us</a></li>
+                </ul>
+                
+              </div>
+
+              
+              
+            </div>
+          </div>
+        </div>
+        <div class="row pt-5 mt-5 text-center">
+          <div class="col-md-12">
+            <div class="border-top pt-5">
+              <p>
+            <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+            Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="icon-heart text-danger" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank" >TijiTech</a>
+            <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+            </p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </footer>
+
+
+</div>
+
+<script>
+
+function checkAnswer(button, correctAnswer, selectedAnswer) {
+
+    const card = button.closest(".card");
+    const result = card.querySelector(".answer-result");
+    const buttons = card.querySelectorAll(".answer-btn");
+
+    // Disable all options after answering
+    buttons.forEach(function(btn) {
+        btn.disabled = true;
+    });
+
+    if (selectedAnswer === correctAnswer) {
+
+        // Selected answer is correct → green
+        button.classList.remove("btn-outline-primary");
+        button.classList.add("btn-success");
+
+        result.innerHTML =
+            '<strong class="text-success">✓ Correct!</strong>';
+
+    } else {
+
+        // Selected answer is wrong → ONLY selected button becomes red
+        button.classList.remove("btn-outline-primary");
+        button.classList.add("btn-danger");
+
+        result.innerHTML =
+            '<strong class="text-danger">✗ Incorrect</strong>';
+    }
+}
+
+</script>
+</body>
+
+</html>
